@@ -28,8 +28,15 @@ export abstract class AbstractRepo<TDocument extends AbstractSchema> {
     return doc;
   }
 
-  async getMany(filter: FilterQuery<TDocument> = {}): Promise<TDocument[]> {
-    return this.model.find(filter).exec();
+  async getMany(
+    filter: FilterQuery<TDocument> = {},
+    options: { skip?: number; limit?: number } = {},
+  ): Promise<TDocument[]> {
+    return this.model
+      .find(filter)
+      .skip(options.skip ?? 0)
+      .limit(options.limit ?? 0)
+      .exec();
   }
 
   async updateOne(

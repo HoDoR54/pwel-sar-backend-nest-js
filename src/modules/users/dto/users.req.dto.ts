@@ -1,8 +1,7 @@
-import { ApiProperty } from '@nestjs/swagger';
-import { IsString } from 'class-validator';
-import { Types } from 'mongoose';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { IsOptional, IsString } from 'class-validator';
 
-export class UserCreateReq {
+export class CreateUserReq {
   @ApiProperty()
   @IsString()
   name: string;
@@ -11,15 +10,44 @@ export class UserCreateReq {
   @IsString()
   email: string;
 
-  @ApiProperty()
+  @ApiPropertyOptional()
   @IsString()
+  @IsOptional()
   profileUrl?: string;
 
   @ApiProperty()
   @IsString()
   password: string;
 
+  @ApiPropertyOptional()
+  @IsString()
+  @IsOptional()
+  bio?: string;
+}
+
+export class LoginReq {
   @ApiProperty()
   @IsString()
-  bio?: string;
+  email: string;
+
+  @ApiProperty()
+  @IsString()
+  password: string;
+}
+
+export class GetAllUsersQueryDto {
+  @ApiPropertyOptional()
+  @IsOptional()
+  @IsString()
+  search?: string;
+}
+
+export class GetUserDto {
+  @ApiPropertyOptional()
+  @IsString()
+  email?: string;
+
+  @ApiPropertyOptional()
+  @IsString()
+  _id?: string;
 }
