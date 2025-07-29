@@ -1,6 +1,6 @@
 import { Model } from 'mongoose';
 import { AbstractRepo } from '../database/abstract.repo';
-import { User } from './users.schema';
+import { User } from './user.schema';
 import { InjectModel } from '@nestjs/mongoose';
 
 export class UsersRepo extends AbstractRepo<User> {

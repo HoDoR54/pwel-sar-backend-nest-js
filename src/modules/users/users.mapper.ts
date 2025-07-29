@@ -1,5 +1,5 @@
 import { UserResponse } from './dto/users.res.dto';
-import { User } from './users.schema';
+import { User } from './user.schema';
 
 export class UsersMapper {
   documentToResponse = (model: User): UserResponse => {

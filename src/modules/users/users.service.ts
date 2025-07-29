@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { UsersRepo } from './users.repo';
 import {
-  CreateUserReq,
+  RegisterReq,
   GetAllUsersQueryDto,
   GetUserDto,
 } from './dto/users.req.dto';
@@ -18,20 +18,9 @@ export class UsersService {
     private readonly _usersMapper: UsersMapper,
   ) {}
 
-  async createUser(req: CreateUserReq): Promise<UserResponse> {
-    const hashed = await bcrypt.hash(req.password, 10);
-    const createdUser = await this._usersRepo.createOne({
-      ...req,
-      password: hashed,
-    });
-    const mappedUser: UserResponse = {
-      _id: createdUser._id.toString(),
-      name: createdUser.name,
-      email: createdUser.email,
-      profileUrl: createdUser.profileUrl,
-      bio: createdUser.bio,
-    };
-    return mappedUser;
+  async createUser(req: RegisterReq): Promise<UserResponse> {
+    const createdUser = await this._usersRepo.createOne(req);
+    return this._usersMapper.documentToResponse(createdUser);
   }
 
   async getHashedByEmail(email: string): Promise<string> {
@@ -39,12 +28,11 @@ export class UsersService {
   }
 
   async findUser(userToFind: GetUserDto): Promise<UserResponse> {
+    // id or email
     const { _id, email } = userToFind;
-
     const filter: any = {};
     if (_id) filter._id = _id;
     else if (email) filter.email = email;
-    else throw new Error('Either _id or email must be provided');
 
     const match = await this._usersRepo.getOneOrThrow(filter);
     return this._usersMapper.documentToResponse(match);
@@ -54,8 +42,8 @@ export class UsersService {
     pagination: PaginationDto,
     query: GetAllUsersQueryDto,
   ): Promise<UserResponse[]> {
+    // create a filter object with the request query
     const filterQuery: any = {};
-
     if (query.search) {
       filterQuery.$or = [
         { name: { $regex: query.search, $options: 'i' } },
@@ -63,6 +51,7 @@ export class UsersService {
       ];
     }
 
+    // call repo method with pagination
     const users = await this._usersRepo.getMany(filterQuery, {
       skip: pagination.skip,
       limit: pagination.limit,
