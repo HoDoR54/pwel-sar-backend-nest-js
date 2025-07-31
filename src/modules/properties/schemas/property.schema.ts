@@ -7,7 +7,7 @@ import {
   PropertyType,
 } from '../../database/enums';
 
-@Schema()
+@Schema({ timestamps: true })
 export class Property extends AbstractSchema {
   @Prop()
   imageUrls?: string[];

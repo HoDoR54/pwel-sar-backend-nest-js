@@ -3,6 +3,8 @@ import {
   PropertyType,
   PropertyStatus,
   PaymentType,
+  PosterType,
+  PostType,
 } from '../../database/enums';
 import { PaginationDto } from 'src/lib/dto/pagination.dto';
 import {
@@ -12,6 +14,7 @@ import {
   IsString,
   Length,
 } from 'class-validator';
+import { Types } from 'mongoose';
 
 export class CreateAddressReqDto {
   @ApiProperty({
@@ -118,4 +121,24 @@ export class GetAllPropertiesQueryDto extends PaginationDto {
 
   @ApiPropertyOptional()
   township?: string;
+}
+
+export class CreatePostReqDto {
+  @ApiProperty()
+  title: string;
+
+  @ApiProperty()
+  content: string;
+
+  @ApiProperty({ type: String, required: true })
+  postedBy: string;
+
+  @ApiProperty({ enum: PosterType, default: PosterType.Owner })
+  posterType: PosterType;
+
+  @ApiProperty({ enum: PostType, required: true })
+  postType: PostType;
+
+  @ApiProperty({ type: String, required: true })
+  property: string;
 }

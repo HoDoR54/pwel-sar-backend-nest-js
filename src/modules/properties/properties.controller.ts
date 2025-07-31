@@ -1,8 +1,11 @@
 import { Body, Controller, Get, Post } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
-import { PropertyResponse } from './dto/properties.res.dto';
+import { PostResponse, PropertyResponse } from './dto/properties.res.dto';
 import { PropertiesService } from './properties.service';
-import { CreatePropertyReqDto } from './dto/properties.req.dto';
+import {
+  CreatePostReqDto,
+  CreatePropertyReqDto,
+} from './dto/properties.req.dto';
 
 @ApiTags('Properties')
 @Controller('properties')
@@ -18,5 +21,12 @@ export class PropertiesController {
     @Body() req: CreatePropertyReqDto,
   ): Promise<PropertyResponse> {
     return await this._propertiesService.createProperty(req);
+  }
+
+  @Post('create-post')
+  async postAnAdvertisement(
+    @Body() req: CreatePostReqDto,
+  ): Promise<PostResponse> {
+    return await this._propertiesService.postAnAdvertisement(req);
   }
 }

@@ -18,3 +18,14 @@ export enum PaymentType {
   BankTransfer = 'BankTransfer',
   Crypto = 'Crypto',
 }
+
+export enum PosterType {
+  Owner = 'Owner',
+  Platform = 'Platform',
+}
+
+export enum PostType {
+  Sale = 'Sale',
+  Rent = 'Rent',
+  Lease = 'Lease',
+}

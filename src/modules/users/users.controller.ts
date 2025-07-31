@@ -1,7 +1,7 @@
 import { Body, Controller, Get, Param, Post, Query } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { UserResponse } from './dto/users.res.dto';
-import { RegisterReq, GetAllUsersQueryDto } from './dto/users.req.dto';
+import { UserRegisterReqDto, GetAllUsersQueryDto } from './dto/users.req.dto';
 import {
   ApiPagination,
   Pagination,

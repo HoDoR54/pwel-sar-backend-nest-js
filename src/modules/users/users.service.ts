@@ -1,26 +1,26 @@
 import { Injectable } from '@nestjs/common';
 import { UsersRepo } from './users.repo';
 import {
-  RegisterReq,
+  UserRegisterReqDto,
   GetAllUsersQueryDto,
   GetUserDto,
 } from './dto/users.req.dto';
 import { UserResponse } from './dto/users.res.dto';
 import * as bcrypt from 'bcrypt';
-import { UsersMapper } from './users.mapper';
 import { Pagination } from 'src/lib/decorators/pagination.decorator';
 import { PaginationDto } from 'src/lib/dto/pagination.dto';
+import { Mapper } from 'src/lib/helpers/mappers';
 
 @Injectable()
 export class UsersService {
   constructor(
     private readonly _usersRepo: UsersRepo,
-    private readonly _usersMapper: UsersMapper,
+    private readonly _mapper: Mapper,
   ) {}
 
-  async createUser(req: RegisterReq): Promise<UserResponse> {
+  async createUser(req: UserRegisterReqDto): Promise<UserResponse> {
     const createdUser = await this._usersRepo.createOne(req);
-    return this._usersMapper.documentToResponse(createdUser);
+    return this._mapper.userDocumentToResponse(createdUser);
   }
 
   async getHashedByEmail(email: string): Promise<string> {
@@ -35,7 +35,7 @@ export class UsersService {
     else if (email) filter.email = email;
 
     const match = await this._usersRepo.getOneOrThrow(filter);
-    return this._usersMapper.documentToResponse(match);
+    return this._mapper.userDocumentToResponse(match);
   }
 
   async getAll(
@@ -57,6 +57,6 @@ export class UsersService {
       limit: pagination.limit,
     });
 
-    return users.map((u) => this._usersMapper.documentToResponse(u));
+    return users.map((u) => this._mapper.userDocumentToResponse(u));
   }
 }

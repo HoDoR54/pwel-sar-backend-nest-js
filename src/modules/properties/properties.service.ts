@@ -1,17 +1,22 @@
 import { Injectable } from '@nestjs/common';
-import { CreatePropertyReqDto } from './dto/properties.req.dto';
-import { PropertyResponse } from './dto/properties.res.dto';
+import {
+  CreatePostReqDto,
+  CreatePropertyReqDto,
+} from './dto/properties.req.dto';
+import { PostResponse, PropertyResponse } from './dto/properties.res.dto';
 import { PropertiesRepo } from './repos/properties.repo';
 import { AddressesRepo } from './repos/addresses.repo';
 import { Types } from 'mongoose';
-import { PropertiesMapper } from './mappers';
+import { Mapper } from '../../lib/helpers/mappers';
+import { PostsRepo } from './repos/posts.repo';
 
 @Injectable()
 export class PropertiesService {
   constructor(
     private readonly _addressRepo: AddressesRepo,
     private readonly _propertiesRepo: PropertiesRepo,
-    private readonly _propertiesMapper: PropertiesMapper,
+    private readonly _postsRepo: PostsRepo,
+    private readonly _mapper: Mapper,
   ) {}
 
   async createProperty(req: CreatePropertyReqDto): Promise<PropertyResponse> {
@@ -39,9 +44,15 @@ export class PropertiesService {
       { address: createdAddress._id },
     );
 
-    return this._propertiesMapper.propDocumentToResponse(
-      updatedProp!,
-      createdAddress,
-    );
+    return this._mapper.propDocumentToResponse(updatedProp!, createdAddress);
+  }
+
+  async postAnAdvertisement(req: CreatePostReqDto): Promise<PostResponse> {
+    const createdPost = await this._postsRepo.createOne({
+      ...req,
+      postedBy: new Types.ObjectId(req.postedBy),
+      property: new Types.ObjectId(req.property),
+    });
+    return this._mapper.postDocumentToResponse(createdPost);
   }
 }

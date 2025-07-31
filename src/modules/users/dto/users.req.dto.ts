@@ -1,7 +1,7 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { IsOptional, IsString } from 'class-validator';
 
-export class RegisterReq {
+export class UserRegisterReqDto {
   @ApiProperty()
   @IsString()
   name: string;
@@ -25,7 +25,7 @@ export class RegisterReq {
   bio?: string;
 }
 
-export class LoginReq {
+export class UserLoginReqDto {
   @ApiProperty()
   @IsString()
   email: string;

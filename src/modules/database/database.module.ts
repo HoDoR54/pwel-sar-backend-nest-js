@@ -7,6 +7,7 @@ import {
   PropertySchema,
 } from '../properties/schemas/property.schema';
 import { Address, AddressSchema } from '../properties/schemas/address.schema';
+import { Post, PostSchema } from '../properties/schemas/posts.schema';
 
 @Global()
 @Module({
@@ -22,6 +23,7 @@ import { Address, AddressSchema } from '../properties/schemas/address.schema';
       { name: User.name, schema: UserSchema },
       { name: Property.name, schema: PropertySchema },
       { name: Address.name, schema: AddressSchema },
+      { name: Post.name, schema: PostSchema },
     ]),
   ],
   exports: [MongooseModule],

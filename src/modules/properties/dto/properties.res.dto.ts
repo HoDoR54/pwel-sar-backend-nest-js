@@ -3,6 +3,7 @@ import {
   PropertyType,
   PropertyStatus,
   PaymentType,
+  PosterType,
 } from '../../database/enums';
 
 export class AddressResponse {
@@ -38,6 +39,12 @@ export class AddressResponse {
 
   @ApiProperty()
   postalCode: string;
+
+  @ApiPropertyOptional({ type: Date })
+  createdAt?: Date;
+
+  @ApiPropertyOptional({ type: Date })
+  updatedAt?: Date;
 }
 
 export class PropertyResponse {
@@ -73,4 +80,33 @@ export class PropertyResponse {
 
   @ApiProperty({ type: AddressResponse })
   address?: AddressResponse;
+
+  @ApiPropertyOptional({ type: Date })
+  createdAt?: Date;
+
+  @ApiPropertyOptional({ type: Date })
+  updatedAt?: Date;
+}
+
+export class PostResponse {
+  @ApiProperty({ type: String })
+  id: string;
+
+  @ApiProperty()
+  content: string;
+
+  @ApiProperty({ enum: PosterType, required: true })
+  posterType: PosterType;
+
+  @ApiProperty({ enum: PosterType, default: PosterType.Owner })
+  postedBy: PosterType;
+
+  @ApiProperty({ type: PropertyResponse, required: true })
+  property: PropertyResponse;
+
+  @ApiPropertyOptional({ type: Date })
+  createdAt?: Date;
+
+  @ApiPropertyOptional({ type: Date })
+  updatedAt?: Date;
 }

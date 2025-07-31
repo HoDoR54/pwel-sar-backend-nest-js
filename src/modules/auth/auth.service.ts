@@ -1,16 +1,17 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
-import { RegisterReq, LoginReq } from '../users/dto/users.req.dto';
+import {
+  UserRegisterReqDto,
+  UserLoginReqDto,
+} from '../users/dto/users.req.dto';
 import { UserResponse } from '../users/dto/users.res.dto';
 import { UsersService } from '../users/users.service';
-import { UsersRepo } from '../users/users.repo';
-import { UsersMapper } from '../users/users.mapper';
 import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class AuthService {
   constructor(private readonly _usersService: UsersService) {}
 
-  async registerUserAsync(req: RegisterReq): Promise<UserResponse> {
+  async registerUserAsync(req: UserRegisterReqDto): Promise<UserResponse> {
     // TO-DO: validate request credentials
     // const isValid = await this._usersService.validateRegisterCredentials(req)
 
@@ -18,7 +19,7 @@ export class AuthService {
     return await this._usersService.createUser({ ...req, password: hashed });
   }
 
-  async login(req: LoginReq): Promise<UserResponse> {
+  async login(req: UserLoginReqDto): Promise<UserResponse> {
     const { email, password } = req;
 
     // check if the user exists

@@ -2,7 +2,7 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Types } from 'mongoose';
 import { AbstractSchema } from 'src/modules/database/abstract.schema';
 
-@Schema()
+@Schema({ timestamps: true })
 export class Address extends AbstractSchema {
   @Prop({ type: Types.ObjectId, required: true, ref: 'Property' })
   property: Types.ObjectId;
