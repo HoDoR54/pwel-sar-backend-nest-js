@@ -1,14 +1,20 @@
 import { Injectable } from '@nestjs/common';
 import {
+  ChangePostStatusReqDto,
   CreatePostReqDto,
   CreatePropertyReqDto,
 } from './dto/properties.req.dto';
-import { PostResponse, PropertyResponse } from './dto/properties.res.dto';
+import {
+  PostResponse,
+  PostStatusResponse,
+  PropertyResponse,
+} from './dto/properties.res.dto';
 import { PropertiesRepo } from './repos/properties.repo';
 import { AddressesRepo } from './repos/addresses.repo';
 import { Types } from 'mongoose';
 import { Mapper } from '../../lib/helpers/mappers';
 import { PostsRepo } from './repos/posts.repo';
+import { PostStatus, PostType } from '../database/enums';
 
 @Injectable()
 export class PropertiesService {
@@ -47,12 +53,56 @@ export class PropertiesService {
     return this._mapper.propDocumentToResponse(updatedProp!, createdAddress);
   }
 
-  async postAnAdvertisement(req: CreatePostReqDto): Promise<PostResponse> {
+  async postPropertyAsAd(
+    propertyId: string,
+    req: CreatePostReqDto,
+  ): Promise<PostResponse> {
     const createdPost = await this._postsRepo.createOne({
       ...req,
       postedBy: new Types.ObjectId(req.postedBy),
-      property: new Types.ObjectId(req.property),
+      property: new Types.ObjectId(propertyId),
+      status: PostStatus.Pending,
+      rejectionReason: undefined,
     });
-    return this._mapper.postDocumentToResponse(createdPost);
+    const matchedProp = await this._propertiesRepo.getOneOrThrow({
+      _id: createdPost.property,
+    });
+    const matchedAddress = await this._addressRepo.getOneOrThrow({
+      _id: matchedProp.address,
+    });
+    return this._mapper.postDocumentToResponse(
+      createdPost,
+      matchedProp,
+      matchedAddress,
+    );
+  }
+
+  async changePostStatus(
+    id: string,
+    req: ChangePostStatusReqDto,
+  ): Promise<PostStatusResponse> {
+    const post = await this._postsRepo.getOneOrThrow({ _id: id });
+
+    if (post.status === req.status) {
+      return this._mapper.postDocumentToStatusResponse(post);
+    }
+
+    if (
+      req.status.toLowerCase() === PostStatus.Rejected.toLowerCase() &&
+      (!req.rejectionReason || req.rejectionReason.trim() === '')
+    ) {
+      throw new Error('Rejection reason is required for rejected posts');
+    }
+
+    const updatedPost = await this._postsRepo.updateOne(
+      { _id: id },
+      { status: req.status, rejectionReason: req.rejectionReason },
+    );
+
+    if (!updatedPost) {
+      throw new Error('Post not found or update failed');
+    }
+
+    return this._mapper.postDocumentToStatusResponse(updatedPost);
   }
 }

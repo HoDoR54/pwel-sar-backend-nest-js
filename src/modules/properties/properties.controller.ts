@@ -1,11 +1,17 @@
-import { Body, Controller, Get, Post } from '@nestjs/common';
+import { Body, Controller, Get, Param, Patch, Post } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
-import { PostResponse, PropertyResponse } from './dto/properties.res.dto';
+import {
+  PostResponse,
+  PostStatusResponse,
+  PropertyResponse,
+} from './dto/properties.res.dto';
 import { PropertiesService } from './properties.service';
 import {
+  ChangePostStatusReqDto,
   CreatePostReqDto,
   CreatePropertyReqDto,
 } from './dto/properties.req.dto';
+import { PostStatus } from '../database/enums';
 
 @ApiTags('Properties')
 @Controller('properties')
@@ -23,10 +29,20 @@ export class PropertiesController {
     return await this._propertiesService.createProperty(req);
   }
 
-  @Post('create-post')
-  async postAnAdvertisement(
+  @Post(':id/posts')
+  async postPropertyAsAd(
+    @Param('id') propertyId: string,
     @Body() req: CreatePostReqDto,
   ): Promise<PostResponse> {
-    return await this._propertiesService.postAnAdvertisement(req);
+    return await this._propertiesService.postPropertyAsAd(propertyId, req);
+  }
+
+  // archive, unarchive, delete, approve, reject
+  @Patch('posts/:id/status')
+  async changePostStatus(
+    @Param('id') id: string,
+    @Body() req: ChangePostStatusReqDto,
+  ): Promise<PostStatusResponse> {
+    return await this._propertiesService.changePostStatus(id, req);
   }
 }

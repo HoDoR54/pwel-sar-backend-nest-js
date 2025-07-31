@@ -1,12 +1,15 @@
 import { Types } from 'mongoose';
 import {
   AddressResponse,
+  PostResponse,
+  PostStatusResponse,
   PropertyResponse,
 } from '../../modules/properties/dto/properties.res.dto';
 import { Address } from '../../modules/properties/schemas/address.schema';
 import { Property } from '../../modules/properties/schemas/property.schema';
 import { UserResponse } from 'src/modules/users/dto/users.res.dto';
 import { User } from 'src/modules/users/user.schema';
+import { Post } from 'src/modules/properties/schemas/posts.schema';
 
 export class Mapper {
   propDocumentToResponse(doc: Property, addressDoc: Address): PropertyResponse {
@@ -46,16 +49,32 @@ export class Mapper {
     return res;
   }
 
-  postDocumentToResponse(doc: any): any {
-    return {
+  postDocumentToResponse(
+    doc: Post,
+    propertyDoc: Property,
+    addressDoc: Address,
+  ): PostResponse {
+    const res: PostResponse = {
       id: doc._id.toString(),
       title: doc.title,
       content: doc.content,
-      property: doc.property.toString(),
+      property: this.propDocumentToResponse(propertyDoc, addressDoc),
+      posterType: doc.posterType,
+      status: doc.status,
       postedBy: doc.postedBy.toString(),
       postType: doc.postType,
       createdAt: doc.createdAt,
       updatedAt: doc.updatedAt,
+    };
+    return res;
+  }
+
+  postDocumentToStatusResponse(doc: Post): PostStatusResponse {
+    return {
+      status: doc.status,
+      postId: doc._id.toString(),
+      updatedAt: doc.updatedAt,
+      rejectionReason: doc.rejectionReason,
     };
   }
 

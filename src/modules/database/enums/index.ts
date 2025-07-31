@@ -29,3 +29,11 @@ export enum PostType {
   Rent = 'Rent',
   Lease = 'Lease',
 }
+
+export enum PostStatus {
+  Active = 'Active',
+  Archived = 'Archived',
+  Deleted = 'Deleted',
+  Pending = 'Pending',
+  Rejected = 'Rejected',
+}

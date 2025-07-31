@@ -4,7 +4,7 @@ import { ApiTags } from '@nestjs/swagger';
 @ApiTags('Admin Auth')
 @Controller('admin/auth')
 export class AuthController {
-  @Get()
+  @Get('hello')
   getHello() {
     return 'Hello';
   }
