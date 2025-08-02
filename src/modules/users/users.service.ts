@@ -8,8 +8,9 @@ import {
 import { UserResponse } from './dto/users.res.dto';
 import * as bcrypt from 'bcrypt';
 import { Pagination } from 'src/lib/decorators/pagination.decorator';
-import { PaginatedReqDto } from 'src/lib/dto/pagination.dto';
+import { PaginatedReqDto, PaginatedResDto } from 'src/lib/dto/pagination.dto';
 import { Mapper } from 'src/lib/helpers/mappers';
+import { SortParams } from 'src/lib/decorators/sorting.decorator';
 
 @Injectable()
 export class UsersService {
@@ -40,23 +41,35 @@ export class UsersService {
 
   async getAll(
     pagination: PaginatedReqDto,
-    query: GetAllUsersQueryDto,
-  ): Promise<UserResponse[]> {
+    sorting: SortParams,
+    filter: GetAllUsersQueryDto,
+  ): Promise<PaginatedResDto<UserResponse>> {
     // create a filter object with the request query
-    const filterQuery: any = {};
-    if (query.search) {
-      filterQuery.$or = [
-        { name: { $regex: query.search, $options: 'i' } },
-        { email: { $regex: query.search, $options: 'i' } },
+    const { page, size } = pagination;
+    const { sortField, sortDirection } = sorting;
+    const query: any = {};
+    if (filter.search) {
+      query.$or = [
+        { name: { $regex: filter.search, $options: 'i' } },
+        { email: { $regex: filter.search, $options: 'i' } },
       ];
     }
 
     // call repo method with pagination
-    const users = await this._usersRepo.getMany(filterQuery, {
+    const users = await this._usersRepo.getMany(query, {
       skip: pagination.skip,
       limit: pagination.limit,
+      sort: { [sortField]: sortDirection },
     });
 
-    return users.map((u) => this._mapper.userDocumentToResponse(u));
+    return {
+      items: users.map((u) => this._mapper.userDocumentToResponse(u)),
+      totalItems: await this._usersRepo.count(query),
+      totalPages: Math.ceil(
+        (await this._usersRepo.count(query)) / pagination.limit,
+      ),
+      currentPage: page || 1,
+      pageSize: size || pagination.limit,
+    };
   }
 }

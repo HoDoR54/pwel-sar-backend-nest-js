@@ -30,12 +30,17 @@ export abstract class AbstractRepo<TDocument extends AbstractSchema> {
 
   async getMany(
     filter: FilterQuery<TDocument> = {},
-    options: { skip?: number; limit?: number } = {},
+    options: {
+      skip?: number;
+      limit?: number;
+      sort?: Record<string, 1 | -1>;
+    } = {},
   ): Promise<TDocument[]> {
     return this.model
       .find(filter)
       .skip(options.skip ?? 0)
       .limit(options.limit ?? 0)
+      .sort(options.sort ?? {})
       .exec();
   }
 

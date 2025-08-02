@@ -1,10 +1,10 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import {
   PropertyType,
-  PropertyStatus,
+  AvailabilityStatus,
   PaymentType,
   PosterType,
-  PostStatus,
+  ApprovalStatus,
   PostType,
 } from '../../database/enums';
 
@@ -51,8 +51,8 @@ export class PropertyResponse {
   @ApiProperty({ type: String })
   owner: string;
 
-  @ApiProperty({ enum: PropertyStatus })
-  status: PropertyStatus;
+  @ApiProperty({ enum: AvailabilityStatus })
+  status: AvailabilityStatus;
 
   @ApiPropertyOptional()
   areaInMeterSquared?: number;
@@ -86,7 +86,7 @@ export class BasePostResponse {
   @ApiProperty({ enum: PosterType }) posterType: PosterType;
   @ApiProperty() postedBy: string;
   @ApiProperty({ enum: PostType }) postType: PostType;
-  @ApiProperty({ enum: PostStatus }) status: PostStatus;
+  @ApiProperty({ enum: ApprovalStatus }) status: ApprovalStatus;
   @ApiPropertyOptional({ type: Date }) createdAt?: Date;
   @ApiPropertyOptional({ type: Date }) updatedAt?: Date;
 }
@@ -101,8 +101,8 @@ export class PostStatusResponse {
   @ApiProperty({ type: String })
   postId: string;
 
-  @ApiProperty({ enum: PostStatus, required: true })
-  status: PostStatus;
+  @ApiProperty({ enum: ApprovalStatus, required: true })
+  status: ApprovalStatus;
 
   @ApiPropertyOptional({ type: String })
   rejectionReason?: string;

@@ -3,7 +3,7 @@ import { AbstractSchema } from '../../database/abstract.schema';
 import { Types } from 'mongoose';
 import {
   PaymentType,
-  PropertyStatus,
+  AvailabilityStatus,
   PropertyType,
 } from '../../database/enums';
 
@@ -18,8 +18,8 @@ export class Property extends AbstractSchema {
   @Prop({ required: true, ref: 'User', type: Types.ObjectId })
   owner: Types.ObjectId;
 
-  @Prop({ enum: PropertyStatus, default: PropertyStatus.Available })
-  status: PropertyStatus;
+  @Prop({ enum: AvailabilityStatus, default: AvailabilityStatus.Available })
+  status: AvailabilityStatus;
 
   @Prop()
   areaInMeterSquared?: number;

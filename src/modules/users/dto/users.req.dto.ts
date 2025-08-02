@@ -51,3 +51,8 @@ export class GetUserDto {
   @IsString()
   _id?: string;
 }
+
+export const userSortingFields = {
+  allowedFields: ['createdAt', 'updatedAt', 'name'],
+  fieldMap: { name: 'user.name' },
+};

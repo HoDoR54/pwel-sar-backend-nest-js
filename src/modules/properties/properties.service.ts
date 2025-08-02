@@ -16,9 +16,9 @@ import { AddressesRepo } from './repos/addresses.repo';
 import { Types } from 'mongoose';
 import { Mapper } from '../../lib/helpers/mappers';
 import { PostsRepo } from './repos/posts.repo';
-import { PostStatus, PostType } from '../database/enums';
 import { PaginatedReqDto, PaginatedResDto } from 'src/lib/dto/pagination.dto';
-import { SortingReqDto } from 'src/lib/dto/sorting.dto';
+import { ApprovalStatus } from '../database/enums';
+import { SortParams } from 'src/lib/decorators/sorting.decorator';
 
 @Injectable()
 export class PropertiesService {
@@ -29,15 +29,15 @@ export class PropertiesService {
     private readonly _mapper: Mapper,
   ) {}
 
-  async createProperty(req: CreatePropertyReqDto): Promise<PropertyResponse> {
+  async createProperty(
+    req: CreatePropertyReqDto,
+    ownerId: string,
+  ): Promise<PropertyResponse> {
     const { address, ...propData } = req;
-
-    // TO-DO: get owner from token
-    const ownerId = new Types.ObjectId();
 
     const createdProp = await this._propertiesRepo.createOne({
       ...propData,
-      owner: ownerId,
+      owner: new Types.ObjectId(ownerId),
     });
 
     const createdAddress = await this._addressRepo.createOne({
@@ -60,13 +60,13 @@ export class PropertiesService {
   async postPropertyAsAd(
     propertyId: string,
     req: CreatePostReqDto,
+    postedBy: string,
   ): Promise<DetailedPostResponse> {
     const createdPost = await this._postsRepo.createOne({
       ...req,
-      postedBy: new Types.ObjectId(req.postedBy),
+      postedBy: new Types.ObjectId(postedBy),
       property: new Types.ObjectId(propertyId),
-      status: PostStatus.Pending,
-      rejectionReason: undefined,
+      status: ApprovalStatus.Pending,
     });
     const matchedProp = await this._propertiesRepo.getOneOrThrow({
       _id: createdPost.property,
@@ -92,7 +92,7 @@ export class PropertiesService {
     }
 
     if (
-      req.status.toLowerCase() === PostStatus.Rejected.toLowerCase() &&
+      req.status.toLowerCase() === ApprovalStatus.Rejected.toLowerCase() &&
       (!req.rejectionReason || req.rejectionReason.trim() === '')
     ) {
       throw new Error('Rejection reason is required for rejected posts');
@@ -125,10 +125,10 @@ export class PropertiesService {
   async getAllPostsWithFilter(
     filter: GetAllPostsQueryReqDto,
     pagination: PaginatedReqDto,
-    sorting: SortingReqDto,
+    sorting: SortParams,
   ): Promise<PaginatedResDto<SimplePostResponse>> {
     const { page, size } = pagination;
-    const { sortBy, order } = sorting;
+    const { sortField, sortDirection } = sorting;
     const query: any = {};
 
     if (filter.propertyType || filter.minPrice || filter.maxPrice) {
@@ -176,6 +176,11 @@ export class PropertiesService {
           },
         },
       ];
+    }
+
+    const sort: Record<string, 1 | -1> = {};
+    if (sortField) {
+      sort[sortField] = sortDirection;
     }
 
     const currentPage = page || 1;

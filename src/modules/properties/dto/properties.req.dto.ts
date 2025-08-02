@@ -1,11 +1,11 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import {
   PropertyType,
-  PropertyStatus,
+  AvailabilityStatus,
   PaymentType,
   PosterType,
   PostType,
-  PostStatus,
+  ApprovalStatus,
 } from '../../database/enums';
 import { PaginatedReqDto } from 'src/lib/dto/pagination.dto';
 import {
@@ -86,11 +86,11 @@ export class CreatePropertyReqDto {
   owner?: string;
 
   @ApiPropertyOptional({
-    enum: PropertyStatus,
-    default: PropertyStatus.Available,
+    enum: AvailabilityStatus,
+    default: AvailabilityStatus.Available,
   })
-  @IsEnum(PropertyStatus)
-  status: PropertyStatus;
+  @IsEnum(AvailabilityStatus)
+  status: AvailabilityStatus;
 
   @ApiPropertyOptional()
   @IsNumber()
@@ -126,10 +126,10 @@ export class GetAllPropertiesQueryReqDto extends PaginatedReqDto {
   @IsOptional()
   type?: PropertyType;
 
-  @ApiPropertyOptional({ enum: PropertyStatus })
-  @IsEnum(PropertyStatus)
+  @ApiPropertyOptional({ enum: AvailabilityStatus })
+  @IsEnum(AvailabilityStatus)
   @IsOptional()
-  status?: PropertyStatus;
+  status?: AvailabilityStatus;
 
   @ApiPropertyOptional()
   @IsNumber()
@@ -177,9 +177,9 @@ export class CreatePostReqDto {
 }
 
 export class ChangePostStatusReqDto {
-  @ApiProperty({ enum: PostStatus, required: true })
-  @IsEnum(PostStatus)
-  status: PostStatus;
+  @ApiProperty({ enum: ApprovalStatus, required: true })
+  @IsEnum(ApprovalStatus)
+  status: ApprovalStatus;
 
   @ApiPropertyOptional()
   @IsString()

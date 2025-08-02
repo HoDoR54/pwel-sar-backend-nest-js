@@ -6,8 +6,10 @@ import {
   Patch,
   Post,
   Query,
+  Request,
+  UseGuards,
 } from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import {
   DetailedPostResponse,
   PostStatusResponse,
@@ -22,37 +24,47 @@ import {
   GetAllPostsQueryReqDto,
   postSortingFields,
 } from './dto/properties.req.dto';
-import { PostStatus } from '../database/enums';
 import { PaginatedReqDto, PaginatedResDto } from 'src/lib/dto/pagination.dto';
 import {
   ApiPagination,
   Pagination,
 } from 'src/lib/decorators/pagination.decorator';
-import { SortingReqDto } from 'src/lib/dto/sorting.dto';
-import { ApiSorting, Sorting } from 'src/lib/decorators/sorting.decorator';
+import {
+  ApiSorting,
+  Sorting,
+  SortParams,
+} from 'src/lib/decorators/sorting.decorator';
+import { JwtAuthGuard } from '../auth/guards/jwt.guard';
 
 @ApiTags('Properties')
 @Controller('properties')
 export class PropertiesController {
   constructor(private readonly _propertiesService: PropertiesService) {}
-  // TO-DO: Get all properties of one user
-  // Get property details by id
-  // Update a property
-  // Soft-delete a property
 
   @Post()
+  @ApiOperation({ summary: 'Create a new property' })
   async createProperty(
     @Body() req: CreatePropertyReqDto,
+    @Request() reqObj: any,
   ): Promise<PropertyResponse> {
-    return await this._propertiesService.createProperty(req);
+    const ownerId = reqObj.user.userId;
+    return await this._propertiesService.createProperty(req, ownerId);
   }
 
   @Post(':id/posts')
+  @UseGuards(JwtAuthGuard)
+  @ApiOperation({ summary: 'Post a property as an ad' })
   async postPropertyAsAd(
     @Param('id') propertyId: string,
     @Body() req: CreatePostReqDto,
+    @Request() reqObj: any,
   ): Promise<DetailedPostResponse> {
-    return await this._propertiesService.postPropertyAsAd(propertyId, req);
+    const postedBy = reqObj.user.userId;
+    return await this._propertiesService.postPropertyAsAd(
+      propertyId,
+      req,
+      postedBy,
+    );
   }
 
   // archive, unarchive, delete, approve, reject
@@ -75,7 +87,7 @@ export class PropertiesController {
   async getAllPostsWithFilter(
     @Query() filter: GetAllPostsQueryReqDto,
     @Pagination() pagination: PaginatedReqDto,
-    @Sorting(postSortingFields) sorting: SortingReqDto,
+    @Sorting(postSortingFields) sorting: SortParams,
   ): Promise<PaginatedResDto<SimplePostResponse>> {
     return await this._propertiesService.getAllPostsWithFilter(
       filter,

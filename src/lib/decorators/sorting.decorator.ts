@@ -14,7 +14,7 @@ export type SortParams = {
 
 export function Sorting(options?: {
   allowedFields?: string[];
-  fieldMap?: Record<string, string>; // e.g. { price: 'property.price' }
+  fieldMap?: Record<string, string>;
 }) {
   return createParamDecorator((_, context: ExecutionContext): SortParams => {
     const req: Request = context.switchToHttp().getRequest();
@@ -39,10 +39,11 @@ export function Sorting(options?: {
     const fieldMap = options?.fieldMap || {};
     const sortField = fieldMap[rawField] || rawField;
 
-    return {
+    const dto: SortParams = {
       sortField,
       sortDirection: sortOrder === 'asc' ? 1 : -1,
     };
+    return dto;
   })();
 }
 

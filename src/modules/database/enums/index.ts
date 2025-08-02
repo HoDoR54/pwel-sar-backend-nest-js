@@ -5,10 +5,18 @@ export enum PropertyType {
   Condo = 'Condo',
 }
 
-export enum PropertyStatus {
+export enum AvailabilityStatus {
   Sold = 'Sold',
   Rented = 'Rented',
   Available = 'Available',
+}
+
+export enum ApprovalStatus {
+  Pending = 'Pending',
+  Approved = 'Approved',
+  Rejected = 'Rejected',
+  Archived = 'Archived',
+  Deleted = 'Deleted',
 }
 
 export enum PaymentType {
@@ -28,12 +36,4 @@ export enum PostType {
   Sale = 'Sale',
   Rent = 'Rent',
   Lease = 'Lease',
-}
-
-export enum PostStatus {
-  Active = 'Active',
-  Archived = 'Archived',
-  Deleted = 'Deleted',
-  Pending = 'Pending',
-  Rejected = 'Rejected',
 }

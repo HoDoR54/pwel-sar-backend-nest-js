@@ -8,6 +8,8 @@ import { PaginatedReqDto } from '../dto/pagination.dto';
 import { applyDecorators } from '@nestjs/common';
 import { ApiQuery } from '@nestjs/swagger';
 
+import { plainToInstance } from 'class-transformer';
+
 export const Pagination = createParamDecorator(
   (_, context: ExecutionContext): PaginatedReqDto => {
     const req: Request = context.switchToHttp().getRequest();
@@ -20,11 +22,9 @@ export const Pagination = createParamDecorator(
         'Invalid pagination params: page and size must be positive integers.',
       );
     }
+    const dto = plainToInstance(PaginatedReqDto, { page, size });
 
-    const limit = size;
-    const skip = (page - 1) * limit;
-
-    return { page, size, skip, limit };
+    return dto;
   },
 );
 
