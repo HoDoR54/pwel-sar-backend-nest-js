@@ -8,7 +8,7 @@ import {
 import { UserResponse } from './dto/users.res.dto';
 import * as bcrypt from 'bcrypt';
 import { Pagination } from 'src/lib/decorators/pagination.decorator';
-import { PaginationDto } from 'src/lib/dto/pagination.dto';
+import { PaginatedReqDto } from 'src/lib/dto/pagination.dto';
 import { Mapper } from 'src/lib/helpers/mappers';
 
 @Injectable()
@@ -39,7 +39,7 @@ export class UsersService {
   }
 
   async getAll(
-    pagination: PaginationDto,
+    pagination: PaginatedReqDto,
     query: GetAllUsersQueryDto,
   ): Promise<UserResponse[]> {
     // create a filter object with the request query

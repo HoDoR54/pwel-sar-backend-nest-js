@@ -7,7 +7,7 @@ import {
   PostType,
   PostStatus,
 } from '../../database/enums';
-import { PaginationDto } from 'src/lib/dto/pagination.dto';
+import { PaginatedReqDto } from 'src/lib/dto/pagination.dto';
 import {
   IsArray,
   IsEnum,
@@ -15,6 +15,7 @@ import {
   IsOptional,
   IsString,
   Length,
+  Min,
 } from 'class-validator';
 import { Types } from 'mongoose';
 
@@ -119,7 +120,7 @@ export class CreatePropertyReqDto {
   address: CreateAddressReqDto;
 }
 
-export class GetAllPropertiesQueryDto extends PaginationDto {
+export class GetAllPropertiesQueryReqDto extends PaginatedReqDto {
   @ApiPropertyOptional({ enum: PropertyType })
   @IsEnum(PropertyType)
   @IsOptional()
@@ -185,3 +186,62 @@ export class ChangePostStatusReqDto {
   @IsOptional()
   rejectionReason?: string;
 }
+
+export class GetAllPostsQueryReqDto {
+  @ApiPropertyOptional({ enum: PostType })
+  @IsEnum(PostType)
+  @IsOptional()
+  postType?: PostType;
+
+  @ApiPropertyOptional({ enum: PropertyType })
+  @IsEnum(PropertyType)
+  @IsOptional()
+  propertyType?: PropertyType;
+
+  @ApiPropertyOptional()
+  @IsString()
+  @IsOptional()
+  street?: string;
+
+  @ApiPropertyOptional()
+  @IsString()
+  @IsOptional()
+  township?: string;
+
+  @ApiPropertyOptional()
+  @IsString()
+  @IsOptional()
+  city?: string;
+
+  @ApiPropertyOptional()
+  @IsString()
+  @IsOptional()
+  stateOrRegion?: string;
+
+  @ApiPropertyOptional()
+  @IsNumber()
+  @Min(0)
+  @IsOptional()
+  minPrice?: number;
+
+  @ApiPropertyOptional()
+  @IsNumber()
+  @Min(0)
+  @IsOptional()
+  maxPrice?: number;
+
+  @ApiPropertyOptional()
+  @IsString()
+  @IsOptional()
+  search?: string;
+
+  @ApiPropertyOptional()
+  @IsString()
+  @IsOptional()
+  posterId?: string;
+}
+
+export const postSortingFields = {
+  allowedFields: ['createdAt', 'updatedAt', 'price'],
+  fieldMap: { price: 'property.price' },
+};

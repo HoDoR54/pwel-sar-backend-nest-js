@@ -1,9 +1,10 @@
 import { Types } from 'mongoose';
 import {
   AddressResponse,
-  PostResponse,
+  DetailedPostResponse,
   PostStatusResponse,
   PropertyResponse,
+  SimplePostResponse,
 } from '../../modules/properties/dto/properties.res.dto';
 import { Address } from '../../modules/properties/schemas/address.schema';
 import { Property } from '../../modules/properties/schemas/property.schema';
@@ -49,12 +50,12 @@ export class Mapper {
     return res;
   }
 
-  postDocumentToResponse(
+  postDocumentToDetailedResponse(
     doc: Post,
     propertyDoc: Property,
     addressDoc: Address,
-  ): PostResponse {
-    const res: PostResponse = {
+  ): DetailedPostResponse {
+    const res: DetailedPostResponse = {
       id: doc._id.toString(),
       title: doc.title,
       content: doc.content,
@@ -67,6 +68,20 @@ export class Mapper {
       updatedAt: doc.updatedAt,
     };
     return res;
+  }
+
+  postDocumentToSimpleResponse(doc: Post): SimplePostResponse {
+    return {
+      id: doc._id.toString(),
+      title: doc.title,
+      content: doc.content,
+      posterType: doc.posterType,
+      postedBy: doc.postedBy.toString(),
+      postType: doc.postType,
+      status: doc.status,
+      createdAt: doc.createdAt,
+      updatedAt: doc.updatedAt,
+    };
   }
 
   postDocumentToStatusResponse(doc: Post): PostStatusResponse {

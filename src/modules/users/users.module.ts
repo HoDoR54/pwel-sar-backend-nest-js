@@ -7,5 +7,6 @@ import { Mapper } from 'src/lib/helpers/mappers';
 @Module({
   controllers: [UsersController],
   providers: [UsersService, UsersRepo, Mapper],
+  exports: [UsersService, UsersRepo],
 })
 export class UsersModule {}

@@ -6,7 +6,7 @@ import {
   ApiPagination,
   Pagination,
 } from 'src/lib/decorators/pagination.decorator';
-import { PaginationDto } from 'src/lib/dto/pagination.dto';
+import { PaginatedReqDto } from 'src/lib/dto/pagination.dto';
 @Controller('users')
 export class UsersController {
   constructor(private readonly _usersService: UsersService) {}
@@ -19,7 +19,7 @@ export class UsersController {
   @Get()
   @ApiPagination()
   async getAll(
-    @Pagination() pagination: PaginationDto,
+    @Pagination() pagination: PaginatedReqDto,
     @Query() query: GetAllUsersQueryDto,
   ): Promise<UserResponse[]> {
     return await this._usersService.getAll(pagination, query);

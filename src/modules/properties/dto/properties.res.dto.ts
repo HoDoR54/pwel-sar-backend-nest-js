@@ -9,8 +9,7 @@ import {
 } from '../../database/enums';
 
 export class AddressResponse {
-  @ApiProperty({ type: String })
-  id: string;
+  @ApiProperty({ type: String }) id: string;
 
   @ApiProperty({
     type: [Number],
@@ -18,35 +17,25 @@ export class AddressResponse {
   })
   coordinates: [number, number];
 
-  @ApiProperty()
-  fullAddress: string;
+  @ApiProperty() fullAddress: string;
 
-  @ApiPropertyOptional()
-  floor?: string;
+  @ApiPropertyOptional() floor?: string;
 
-  @ApiProperty()
-  street: string;
+  @ApiProperty() street: string;
 
-  @ApiProperty()
-  township: string;
+  @ApiProperty() township: string;
 
-  @ApiProperty()
-  district: string;
+  @ApiProperty() district: string;
 
-  @ApiProperty()
-  city: string;
+  @ApiProperty() city: string;
 
-  @ApiProperty()
-  stateOrRegion: string;
+  @ApiProperty() stateOrRegion: string;
 
-  @ApiProperty()
-  postalCode: string;
+  @ApiProperty() postalCode: string;
 
-  @ApiPropertyOptional({ type: Date })
-  createdAt?: Date;
+  @ApiPropertyOptional({ type: Date }) createdAt?: Date;
 
-  @ApiPropertyOptional({ type: Date })
-  updatedAt?: Date;
+  @ApiPropertyOptional({ type: Date }) updatedAt?: Date;
 }
 
 export class PropertyResponse {
@@ -90,36 +79,22 @@ export class PropertyResponse {
   updatedAt?: Date;
 }
 
-export class PostResponse {
-  @ApiProperty({ type: String })
-  id: string;
+export class BasePostResponse {
+  @ApiProperty() id: string;
+  @ApiProperty() title: string;
+  @ApiProperty() content: string;
+  @ApiProperty({ enum: PosterType }) posterType: PosterType;
+  @ApiProperty() postedBy: string;
+  @ApiProperty({ enum: PostType }) postType: PostType;
+  @ApiProperty({ enum: PostStatus }) status: PostStatus;
+  @ApiPropertyOptional({ type: Date }) createdAt?: Date;
+  @ApiPropertyOptional({ type: Date }) updatedAt?: Date;
+}
 
-  @ApiProperty()
-  title: string;
+export class SimplePostResponse extends BasePostResponse {}
 
-  @ApiProperty()
-  content: string;
-
-  @ApiProperty({ enum: PosterType, required: true })
-  posterType: PosterType;
-
-  @ApiProperty({ type: String, required: true })
-  postedBy: string;
-
-  @ApiProperty({ enum: PostType, required: true })
-  postType: PostType;
-
-  @ApiProperty({ enum: PostStatus })
-  status: PostStatus;
-
-  @ApiProperty({ type: PropertyResponse, required: true })
-  property: PropertyResponse;
-
-  @ApiPropertyOptional({ type: Date })
-  createdAt?: Date;
-
-  @ApiPropertyOptional({ type: Date })
-  updatedAt?: Date;
+export class DetailedPostResponse extends BasePostResponse {
+  @ApiProperty({ type: PropertyResponse }) property: PropertyResponse;
 }
 
 export class PostStatusResponse {

@@ -47,7 +47,6 @@ export abstract class AbstractRepo<TDocument extends AbstractSchema> {
       .findOneAndUpdate(filter, update, {
         new: true,
       })
-
       .exec();
   }
 

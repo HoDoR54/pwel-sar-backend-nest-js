@@ -4,12 +4,12 @@ import {
   ExecutionContext,
 } from '@nestjs/common';
 import { Request } from 'express';
-import { PaginationDto } from '../dto/pagination.dto';
+import { PaginatedReqDto } from '../dto/pagination.dto';
 import { applyDecorators } from '@nestjs/common';
 import { ApiQuery } from '@nestjs/swagger';
 
 export const Pagination = createParamDecorator(
-  (_, context: ExecutionContext): PaginationDto => {
+  (_, context: ExecutionContext): PaginatedReqDto => {
     const req: Request = context.switchToHttp().getRequest();
 
     const page = req.query.page ? parseInt(req.query.page as string) : 1;
